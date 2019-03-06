@@ -26,7 +26,7 @@ class AllResults(NamedTuple):
     angles: np.ndarray
     rpms: np.ndarray
 
-def addText(img, text: str, position: Tuple[int, int], size = 2):
+def addText(img, text: str, position: Tuple[int, int], size = 1):
     cv2.putText(
         img,
         text,

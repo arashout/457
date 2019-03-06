@@ -25,8 +25,7 @@ def graph(
     ):
     plt.figure(1)
     plt.subplot(2, 1, 1)
-    plt.plot(tr.t, angles, 'o')
-    plt.xlim(left=2, right=4)
+    plt.plot(tr.t, angles, '.')
     plt.ylabel('Angle [Degree]')
     plt.grid(True)
 

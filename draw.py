@@ -10,9 +10,9 @@ from typing import Optional
 from common import VIDEO_FRAMERATE, CircleFitResult, TrackResult, addText 
 import compute
 
-TEXT_X = 100
-TEXT_Y_START = 100
-TEXT_SPACING = 80
+TEXT_X = 20
+TEXT_Y_START = 40
+TEXT_SPACING = 30
 
 def draw(
     video_path: str,
@@ -20,6 +20,7 @@ def draw(
     cfr: CircleFitResult,
     angles: np.ndarray,
     rpms: np.ndarray,
+    flipped = False
 ):
     fps = VIDEO_FRAMERATE
     x = tr.x
@@ -43,6 +44,7 @@ def draw(
     r = cfr.r
 
     i = -1
+    paused = True
     while i < (x.shape[0] - 1):
         # Read a new frame
         ok, frame = video.read()
@@ -50,6 +52,7 @@ def draw(
         if not ok:
             raise ValueError(
                 "Could not read frame! At frame: {0} Time: {1}".format(i, t[i]))
+        frame = cv2.flip(frame, flipped) if flipped else frame
 
         # Draw 0-angle reference arrow, current angle arrow and fitted circle
         cv2.arrowedLine(frame, circle_center,
@@ -62,8 +65,8 @@ def draw(
         # Text Background
         cv2.rectangle(
             frame, 
-            (TEXT_X - 50,0),
-            (TEXT_X + 5*TEXT_SPACING, TEXT_Y_START + 4*TEXT_SPACING),
+            (0,0),
+            (TEXT_X + 7*TEXT_SPACING, TEXT_Y_START + 4*TEXT_SPACING),
             (10,10,10),
             -1
         )
@@ -78,10 +81,10 @@ def draw(
         # Frames per second
         addText(frame, "FPS: {0}".format(fps), (TEXT_X, TEXT_Y_START+3*TEXT_SPACING))
 
-        # Display result
-        resized = cv2.resize(frame, dsize=None, fx=0.5,
-                             fy=0.5, interpolation=cv2.INTER_LINEAR)
-        cv2.imshow("Drawing", resized)
+        cv2.imshow("Drawing", frame)
+        if paused:
+            input("Paused, pressed any key")
+            paused = False
 
         time.sleep(1/fps)
 

@@ -8,7 +8,7 @@ import pickle
 
 from common import TrackResult, VIDEO_FRAMERATE, DATA_DIR, getBasename
 
-def track(video_path: str) -> TrackResult:
+def track(video_path: str, flipped = False) -> TrackResult:
     tracker = cv2.TrackerCSRT_create()
     video_path = sys.argv[1]
     video = cv2.VideoCapture(video_path)
@@ -23,6 +23,8 @@ def track(video_path: str) -> TrackResult:
         print('Cannot read video file')
         sys.exit()
 
+
+    frame = cv2.flip(frame, flipped) if flipped else frame
     bbox = cv2.selectROI(frame, False)
     bbox_width = bbox[2]
     bbox_height = bbox[3]
@@ -42,6 +44,7 @@ def track(video_path: str) -> TrackResult:
             break
 
         timer = cv2.getTickCount()
+        frame = cv2.flip(frame, flipped) if flipped else frame
         ok, bbox = tracker.update(frame)
 
         # Calculate actual time taken in video

@@ -18,12 +18,13 @@ VIDEO_FRAMERATE = 30
 if __name__ == '__main__':
     if len(sys.argv) < 2 or not os.path.isfile(sys.argv[1]):
         raise ValueError("Need to pass a video file")
+    flipped = len(sys.argv) > 2
     video_path = sys.argv[1]
     # 1. TRACKING
     try:
         tr = common.getTR(common.getBasename(video_path))
     except FileNotFoundError:
-        tr = track(video_path)
+        tr = track(video_path, flipped)
 
     # 2. Fit Circle (Find center of rotation and radius)
     cfr = compute.fit_circle(tr.x, tr.y)
@@ -41,7 +42,7 @@ if __name__ == '__main__':
     df.to_csv(os.path.join(common.DATA_DIR, common.getBasename(video_path)) + '.csv')
     # 4: Draw on video
     if input("Enter 's' to skip:\n") != 's':
-        draw(sys.argv[1], tr, cfr, angles, rpms)
+        draw(sys.argv[1], tr, cfr, angles, rpms, flipped)
 
     # 4. Output graphs
     graph(tr, angles, rpms)
